@@ -1,0 +1,57 @@
+version: "2"
+
+services:
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.8
+    ports:
+      - "2181:2181"
+    environment:
+      #- ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_ENABLE_AUTH=yes
+      - ZOO_SERVER_USERS=kafka
+      - ZOO_SERVER_PASSWORDS=kafka_password
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper
+  kafka-0:
+    image: docker.io/bitnami/kafka:3.2
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+  
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_BROKER_ID=0
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:SSL,CLIENT:SASL_SSL
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,CLIENT://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://12:9092,CLIENT://12:9093
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_ZOOKEEPER_USER=kafka
+      - KAFKA_ZOOKEEPER_PASSWORD=kafka_password
+      - KAFKA_CLIENT_USERS=user
+      - KAFKA_CLIENT_PASSWORDS=password
+      - KAFKA_CERTIFICATE_PASSWORD=123456
+      - KAFKA_TLS_TYPE=JKS # or PEM
+      - KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_LISTENER_NAME_INTERNAL_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+      - KAFKA_ZOOKEEPER_PROTOCOL=SASL
+      #- KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN
+      
+    volumes:
+     
+      - '/Users/karnan/workspace/vscode/kafka/kafka_cert/kafka.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+      - '/Users/karnan/workspace/vscode/kafka/kafka_cert/kafka.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+      - kafka_0_data:/bitnami/kafka
+    depends_on:
+      - zookeeper
+  
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_0_data:
+    driver: local
+    #/Users/karnan/workspace/vscode/kafka/1
+  kafka_1_data:
+    driver: /Users/karnan/workspace/vscode/kafka/2
+  kafka_2_data:
+    driver: /Users/karnan/workspace/vscode/kafka/3
